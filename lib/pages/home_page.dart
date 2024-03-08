@@ -1,3 +1,5 @@
+import 'package:contador/pages/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,6 +27,16 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              runApp(const MaterialApp(
+              home: LoginPage(),
+      ));
+            },
+          ),
+        ],
       ),
       body: Center(
           child: Column(

@@ -1,5 +1,31 @@
 import "package:flutter/material.dart";
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:contador/pages/forgot_password.dart';
+import 'package:contador/pages/home_page.dart';
+
+final TextEditingController _emailController = TextEditingController();
+final TextEditingController _passwordController = TextEditingController();
+
+Future<void> signInWithEmailAndPassword(
+    String email, String password, BuildContext context) async {
+  try {
+    final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    if (credential.user != null) {
+      runApp(const MaterialApp(
+        home: HomePage(),
+      ));
+    }
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+      print('Usuario no encontrado');
+    } else if (e.code == 'wrong-password') {
+      print('Contraseña incorrecta');
+    }
+  }
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,17 +55,14 @@ class Fondo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.blue.shade300,
-            Colors.blue,
-          ],
-          begin: Alignment.centerRight,
-          end: Alignment.centerLeft,
-
-          
-        )
-      ),
+          gradient: LinearGradient(
+        colors: [
+          Colors.blue.shade300,
+          Colors.blue,
+        ],
+        begin: Alignment.centerRight,
+        end: Alignment.centerLeft,
+      )),
     );
   }
 }
@@ -68,7 +91,9 @@ class _ContenidoState extends State<Contenido> {
               fontSize: 25,
             ),
           ),
-          SizedBox(height: 5,),
+          SizedBox(
+            height: 5,
+          ),
           Text(
             'Welcome to your account',
             style: TextStyle(
@@ -77,9 +102,13 @@ class _ContenidoState extends State<Contenido> {
               letterSpacing: 1.5,
             ),
           ),
-          SizedBox(height: 15,),
+          SizedBox(
+            height: 15,
+          ),
           Datos(),
-          SizedBox(height: 5,),
+          SizedBox(
+            height: 5,
+          ),
         ],
       ),
     );
@@ -96,15 +125,14 @@ class Datos extends StatefulWidget {
 class _DatosState extends State<Datos> {
   bool showPass = true;
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -116,15 +144,19 @@ class _DatosState extends State<Datos> {
               fontSize: 20,
             ),
           ),
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           TextFormField(
+            controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'micorreo@micorreo.com'
-              ),
+                border: OutlineInputBorder(),
+                hintText: 'micorreo@micorreo.com'),
           ),
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           const Text(
             'Password',
             style: TextStyle(
@@ -133,26 +165,30 @@ class _DatosState extends State<Datos> {
               fontSize: 20,
             ),
           ),
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           TextFormField(
+            controller: _passwordController,
             obscureText: showPass,
             decoration: InputDecoration(
-              border:  const OutlineInputBorder(),
-              hintText: 'password',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.remove_red_eye_outlined),
-                onPressed: () => {
-                  setState(() {
-                    showPass == true ? showPass = false : showPass = true;
-                  })
-                },
-              )
-            ),
+                border: const OutlineInputBorder(),
+                hintText: 'password',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.remove_red_eye_outlined),
+                  onPressed: () => {
+                    setState(() {
+                      showPass == true ? showPass = false : showPass = true;
+                    })
+                  },
+                )),
           ),
           const Remember(),
-          const SizedBox(height: 30,),
-          const Botones(),
           const AvisoPrivacidad(),
+          const SizedBox(
+            height: 15,
+          ),
+          const Botones(),
         ],
       ),
     );
@@ -171,29 +207,32 @@ class _RememberState extends State<Remember> {
 
   @override
   Widget build(BuildContext context) {
-
     return Row(
       children: [
         Checkbox(
           value: checked,
           onChanged: (value) => {
-            setState(() => checked == false ? checked = true : checked = false
-            )
+            setState(() => checked == false ? checked = true : checked = false)
           },
         ),
         const Text(
           'Recordar cuenta',
-          style: TextStyle(fontSize: 12,),
+          style: TextStyle(
+            fontSize: 12,
           ),
+        ),
         const Spacer(),
         TextButton(
           onPressed: () => {
             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const RecoverPassword())
-            )
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const RecoverPassword()))
           },
-          child: const Text('¿Olvido su contraseña?', style: TextStyle(fontSize: 12),),
+          child: const Text(
+            '¿Olvido su contraseña?',
+            style: TextStyle(fontSize: 12),
+          ),
         ),
       ],
     );
@@ -207,67 +246,66 @@ class Botones extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () => {},
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Color(0xff142047))
-              ),
-              child: const Text(
-                'Login', 
-                style: TextStyle(
-                  color: Colors.white
-                )
-              ),
-            ),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              signInWithEmailAndPassword(
+                  _emailController.text, _passwordController.text, context);
+            },
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(const Color(0xff142047))),
+            child: const Text('Login', style: TextStyle(color: Colors.white)),
           ),
-          const SizedBox(
-            height: 25, 
-            width: double.infinity,),
-          const Text(
-            'O entra con',
-            style: TextStyle(
-              color: Colors.grey
-            ),  
-          ),
-          const SizedBox(
-            height: 25, 
-            width: double.infinity,),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: OutlinedButton(
-              onPressed: () => {},
-              child: const Text(
-                'Google',
-                style: TextStyle(
-                  color: Color(0Xff124047),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+        ),
+        const SizedBox(
+          height: 25,
+          width: double.infinity,
+        ),
+        const Text(
+          'O entra con',
+          style: TextStyle(color: Colors.grey),
+        ),
+        const SizedBox(
+          height: 25,
+          width: double.infinity,
+        ),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton(
+            onPressed: () => {},
+            child: const Text(
+              'Google',
+              style: TextStyle(
+                color: Color(0Xff124047),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
           ),
-          const SizedBox(
-            height: 15, 
-            width: double.infinity,),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: OutlinedButton(
-              onPressed: () => {},
-              child: const Text(
-                'Facebook',
-                style: TextStyle(
-                  color: Color(0Xff124047),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+        ),
+        const SizedBox(
+          height: 15,
+          width: double.infinity,
+        ),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton(
+            onPressed: () => {},
+            child: const Text(
+              'Facebook',
+              style: TextStyle(
+                color: Color(0Xff124047),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
           ),
+        ),
       ],
     );
   }
@@ -290,14 +328,15 @@ class _AvisoPrivacidadState extends State<AvisoPrivacidad> {
       children: [
         TextButton(
           onPressed: () => {},
-          child: const Text('Terminos y Aviso de privacidad', 
-          style: TextStyle(fontSize: 12),),
+          child: const Text(
+            'Terminos y Aviso de privacidad',
+            style: TextStyle(fontSize: 12),
+          ),
         ),
         Checkbox(
           value: checked,
-          onChanged: (value) => 
-            setState(() => checked == false ? checked = true : checked = false
-          ),
+          onChanged: (value) => setState(
+              () => checked == false ? checked = true : checked = false),
         )
       ],
     );

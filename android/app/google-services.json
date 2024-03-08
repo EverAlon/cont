@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "627387610740",
+    "project_id": "verificacion-886d7",
+    "storage_bucket": "verificacion-886d7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627387610740:android:9ebe15c26f637916abc321",
+        "android_client_info": {
+          "package_name": "com.example.contador"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYwF8xzFLhK9SbxNQWgAmHSYPJm18WHec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
