@@ -2,9 +2,48 @@ import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:contador/pages/forgot_password.dart';
 import 'package:contador/pages/home_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 final TextEditingController _emailController = TextEditingController();
 final TextEditingController _passwordController = TextEditingController();
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn googleSignIn = GoogleSignIn();
+
+Future<UserCredential?> signInWithGoogle(BuildContext context) async {
+  try {
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      return userCredential;
+    }
+  } catch (e) {
+    print('Error signing in with Google: $e');
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Error signing in with Google'),
+    ));
+  }
+}
+
+Future<UserCredential?> signInWithFacebook(BuildContext context) async {
+  try {
+    final LoginResult result = await FacebookAuth.instance.login();
+    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(result.accessToken!.token);
+    final UserCredential userCredential = await _auth.signInWithCredential(facebookAuthCredential);
+    return userCredential;
+  } catch (e) {
+    print('Error signing in with Facebook: $e');
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Error signing in with Facebook'),
+    ));
+  }
+}
 
 Future<void> signInWithEmailAndPassword(
     String email, String password, BuildContext context) async {
@@ -276,7 +315,7 @@ class Botones extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: OutlinedButton(
-            onPressed: () => {},
+            onPressed: () => signInWithGoogle(context),
             child: const Text(
               'Google',
               style: TextStyle(
@@ -295,7 +334,7 @@ class Botones extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: OutlinedButton(
-            onPressed: () => {},
+            onPressed: () => signInWithFacebook(context),
             child: const Text(
               'Facebook',
               style: TextStyle(
